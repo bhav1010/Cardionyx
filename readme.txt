@@ -179,4 +179,4 @@ Left ventricular hypertrophy
 Caused by hypertension (most common), arrhythmia, aortic valve stenosis, diabetes, hypertrophic cardiomyopathy, and etc.
 6. Poor R progression : Y, N [categorical]
 Poor R progression
-suggestive of prior anterior myocardial infarction, or may be a normal variant
+suggestive of prior anterior myocardial infarction, or may be a normal variant.
