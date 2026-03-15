@@ -1,0 +1,5 @@
+train: c:/Users/10bha/OneDrive/Documents/projects/Cardionyx/Cardionyx/Cardionyx.v1i.yolo26/train/images
+val: c:/Users/10bha/OneDrive/Documents/projects/Cardionyx/Cardionyx/Cardionyx.v1i.yolo26/train/images
+
+nc: 5
+names: ['LVH', 'Pathological Q Wave', 'Poor R Progression', 'ST Depression', 'T inversion']
