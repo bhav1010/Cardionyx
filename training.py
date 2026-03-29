@@ -29,10 +29,15 @@ target_col = df.columns[-1]
 print("Target column:", target_col)
 
 # -------------------------
-# 2. TARGET ENCODING ONLY
+# 2. TARGET ENCODING
 # -------------------------
-if df[target_col].dtype == object:
-    df[target_col] = pd.factorize(df[target_col])[0]
+if pd.api.types.is_object_dtype(df[target_col]) or pd.api.types.is_string_dtype(df[target_col]) or df[target_col].dtype == object or str(df[target_col].dtype) == 'str':
+    df[target_col] = df[target_col].astype(str).str.strip().str.lower()
+    df[target_col] = df[target_col].map({"cad": 1, "normal": 0})
+    
+    # Catch any unmapped values
+    if df[target_col].isna().any():
+        df[target_col] = pd.factorize(df[target_col])[0]
 
 # -------------------------
 # 3. FEATURE / TARGET SPLIT
