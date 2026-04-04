@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cardionyx — CAD Risk Prediction</title>
+  <meta name="description" content="Cardionyx is an AI-powered Coronary Artery Disease (CAD) risk assessment tool. Enter patient clinical data and optionally upload an ECG image for a more accurate prediction." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 34.5C20 34.5 4 24.5 4 14C4 9.03 8.03 5 13 5C15.97 5 18.6 6.44 20 8.67C21.4 6.44 24.03 5 27 5C31.97 5 36 9.03 36 14C36 24.5 20 34.5 20 34.5Z" fill="#E85C6A" opacity="0.15"/>
+            <path d="M20 34.5C20 34.5 4 24.5 4 14C4 9.03 8.03 5 13 5C15.97 5 18.6 6.44 20 8.67C21.4 6.44 24.03 5 27 5C31.97 5 36 9.03 36 14C36 24.5 20 34.5 20 34.5Z" stroke="#E85C6A" stroke-width="1.5"/>
+            <polyline points="7,18 11,18 13,12 15,24 17,16 19,20 21,20 23,14 25,22 27,18 33,18" stroke="#4A90D9" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-name">Cardionyx</h1>
+          <span class="brand-tagline">CAD Risk Prediction System</span>
+        </div>
+      </div>
+      <div class="header-badge">AI-Powered · Demo</div>
+    </div>
+  </header>
+
+  <!-- ===== HERO STRIP ===== -->
+  <div class="hero-strip">
+    <p>Enter patient clinical data below. An ECG image is optional but can improve prediction accuracy via AI-powered ECG analysis.</p>
+  </div>
+
+  <!-- ===== MAIN FORM ===== -->
+  <main class="container">
+    <form id="predictionForm" novalidate>
+
+      <!-- ECG IMAGE UPLOAD -->
+      <section class="card ecg-card">
+        <div class="section-header">
+          <div class="section-icon ecg-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="2,12 5,12 6,8 8,16 10,10 12,14 13,12 16,12 17,9 19,15 21,12 22,12"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">ECG Image</h2>
+            <p class="section-desc">Optional — for enhanced AI analysis using YOLO ECG detection</p>
+          </div>
+        </div>
+
+        <div class="ecg-upload-area" id="ecgDropZone">
+          <input type="file" id="ecgImage" name="ecg_image" accept="image/*" class="file-input" />
+          <div class="upload-content" id="uploadContent">
+            <div class="upload-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="17,8 12,3 7,8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <p class="upload-title">Drop ECG image here or <span class="upload-link">browse</span></p>
+            <p class="upload-hint">PNG, JPG, JPEG up to 10 MB</p>
+          </div>
+          <div class="upload-preview" id="uploadPreview" style="display:none;">
+            <img id="previewImg" src="" alt="ECG Preview" />
+            <div class="preview-info">
+              <span id="previewName" class="preview-filename"></span>
+              <button type="button" class="preview-remove" id="removeImage">✕ Remove</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ecg-note">
+          <span class="note-icon">💡</span>
+          <span>For a <strong>more accurate prediction</strong>, uploading an ECG image is recommended. The AI will automatically detect ECG abnormalities (ST elevation, Q waves, T inversions, LVH, etc.) and factor them into the risk assessment.</span>
+        </div>
+      </section>
+
+      <!-- DEMOGRAPHICS -->
+      <section class="card">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Demographics</h2>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field-group">
+            <label for="age" class="field-label">Age <span class="unit">(years)</span> <span class="required">*</span></label>
+            <input type="number" id="age" name="Age" class="field-input" placeholder="e.g. 55" min="1" max="120" required />
+          </div>
+          <div class="field-group">
+            <label for="weight" class="field-label">Weight <span class="unit">(kg)</span> <span class="required">*</span></label>
+            <input type="number" id="weight" name="Weight" class="field-input" placeholder="e.g. 72" min="20" max="300" step="0.1" required />
+          </div>
+          <div class="field-group">
+            <label for="height" class="field-label">Height <span class="unit">(cm)</span> <span class="required">*</span></label>
+            <input type="number" id="height" name="Length" class="field-input" placeholder="e.g. 170" min="100" max="250" step="0.1" required />
+          </div>
+          <div class="field-group">
+            <label for="sex" class="field-label">Sex <span class="required">*</span></label>
+            <select id="sex" name="Sex" class="field-input" required>
+              <option value="">Select…</option>
+              <option value="Male">Male</option>
+              <option value="Fmale">Female</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="bmi" class="field-label">BMI <span class="unit">(auto-calculated)</span></label>
+            <input type="number" id="bmi" name="BMI" class="field-input field-auto" placeholder="Auto" step="0.01" readonly />
+            <span class="field-hint">Calculated from height &amp; weight</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- MEDICAL HISTORY -->
+      <section class="card">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+              <rect x="9" y="3" width="6" height="4" rx="2"/>
+              <line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Medical History</h2>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field-group">
+            <label class="field-label">Diabetes Mellitus</label>
+            <div class="toggle-group" id="DM-group">
+              <button type="button" class="toggle-btn active" data-field="DM" data-value="0">No</button>
+              <button type="button" class="toggle-btn" data-field="DM" data-value="1">Yes</button>
+            </div>
+            <input type="hidden" name="DM" id="DM" value="0" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Hypertension</label>
+            <div class="toggle-group" id="HTN-group">
+              <button type="button" class="toggle-btn active" data-field="HTN" data-value="0">No</button>
+              <button type="button" class="toggle-btn" data-field="HTN" data-value="1">Yes</button>
+            </div>
+            <input type="hidden" name="HTN" id="HTN" value="0" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Current Smoker</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Current Smoker" data-value="0">No</button>
+              <button type="button" class="toggle-btn" data-field="Current Smoker" data-value="1">Yes</button>
+            </div>
+            <input type="hidden" name="Current Smoker" id="current-smoker" value="0" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Ex-Smoker</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="EX-Smoker" data-value="0">No</button>
+              <button type="button" class="toggle-btn" data-field="EX-Smoker" data-value="1">Yes</button>
+            </div>
+            <input type="hidden" name="EX-Smoker" id="ex-smoker" value="0" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Family History of CAD</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="FH" data-value="0">No</button>
+              <button type="button" class="toggle-btn" data-field="FH" data-value="1">Yes</button>
+            </div>
+            <input type="hidden" name="FH" id="FH" value="0" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Obesity</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Obesity" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="Obesity" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="Obesity" id="Obesity" value="N" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Chronic Renal Failure</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="CRF" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="CRF" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="CRF" id="CRF" value="N" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Cerebrovascular Accident</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="CVA" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="CVA" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="CVA" id="CVA" value="N" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Airway Disease</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Airway disease" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="Airway disease" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="Airway disease" id="airway-disease" value="N" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Thyroid Disease</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Thyroid Disease" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="Thyroid Disease" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="Thyroid Disease" id="thyroid-disease" value="N" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Congestive Heart Failure</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="CHF" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="CHF" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="CHF" id="CHF" value="N" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Dyslipidemia</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="DLP" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="DLP" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="DLP" id="DLP" value="N" />
+          </div>
+        </div>
+      </section>
+
+      <!-- VITALS & EXAMINATION -->
+      <section class="card">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Vitals &amp; Examination</h2>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field-group">
+            <label for="bp" class="field-label">Blood Pressure MAP <span class="unit">(mmHg)</span></label>
+            <input type="number" id="bp" name="BP" class="field-input" placeholder="e.g. 100" min="40" max="200" />
+          </div>
+          <div class="field-group">
+            <label for="pr" class="field-label">Pulse Rate <span class="unit">(/min)</span></label>
+            <input type="number" id="pr" name="PR" class="field-input" placeholder="e.g. 80" min="30" max="200" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Edema</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Edema" data-value="0">No</button>
+              <button type="button" class="toggle-btn" data-field="Edema" data-value="1">Yes</button>
+            </div>
+            <input type="hidden" name="Edema" id="Edema" value="0" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Weak Peripheral Pulse</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Weak Peripheral Pulse" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="Weak Peripheral Pulse" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="Weak Peripheral Pulse" id="weak-peripheral-pulse" value="N" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Lung Rales</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Lung rales" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="Lung rales" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="Lung rales" id="lung-rales" value="N" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Systolic Murmur</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Systolic Murmur" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="Systolic Murmur" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="Systolic Murmur" id="systolic-murmur" value="N" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Diastolic Murmur</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Diastolic Murmur" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="Diastolic Murmur" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="Diastolic Murmur" id="diastolic-murmur" value="N" />
+          </div>
+        </div>
+      </section>
+
+      <!-- SYMPTOMS -->
+      <section class="card">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Symptoms</h2>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field-group">
+            <label class="field-label">Typical Chest Pain</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Typical Chest Pain" data-value="0">No</button>
+              <button type="button" class="toggle-btn" data-field="Typical Chest Pain" data-value="1">Yes</button>
+            </div>
+            <input type="hidden" name="Typical Chest Pain" id="typical-chest-pain" value="0" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Dyspnea <span class="unit">(Shortness of Breath)</span></label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Dyspnea" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="Dyspnea" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="Dyspnea" id="Dyspnea" value="N" />
+          </div>
+          <div class="field-group">
+            <label for="function-class" class="field-label">NYHA Function Class</label>
+            <select id="function-class" name="Function Class" class="field-input">
+              <option value="0">0 — No limitation</option>
+              <option value="1">1 — Slight limitation</option>
+              <option value="2">2 — Marked limitation</option>
+              <option value="3">3 — Severe limitation</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Atypical Angina</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Atypical" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="Atypical" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="Atypical" id="Atypical" value="N" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Nonanginal Chest Pain</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Nonanginal" data-value="N">No</button>
+              <button type="button" class="toggle-btn" data-field="Nonanginal" data-value="Y">Yes</button>
+            </div>
+            <input type="hidden" name="Nonanginal" id="Nonanginal" value="N" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Exertional Chest Pain</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="Exertional CP" data-value="0">No</button>
+              <button type="button" class="toggle-btn" data-field="Exertional CP" data-value="1">Yes</button>
+            </div>
+            <input type="hidden" name="Exertional CP" id="exertional-cp" value="0" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Low Threshold Angina</label>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" data-field="LowTH Ang" data-value="0">No</button>
+              <button type="button" class="toggle-btn" data-field="LowTH Ang" data-value="1">Yes</button>
+            </div>
+            <input type="hidden" name="LowTH Ang" id="lowth-ang" value="0" />
+          </div>
+        </div>
+      </section>
+
+      <!-- LAB RESULTS -->
+      <section class="card">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Laboratory Results</h2>
+            <p class="section-desc">Leave blank for any unknown values — the model will handle missing data</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field-group">
+            <label for="fbs" class="field-label">Fasting Blood Sugar <span class="unit">(mg/dL)</span></label>
+            <input type="number" id="fbs" name="FBS" class="field-input" placeholder="e.g. 100" step="0.1" />
+          </div>
+          <div class="field-group">
+            <label for="cr" class="field-label">Creatinine <span class="unit">(mg/dL)</span></label>
+            <input type="number" id="cr" name="CR" class="field-input" placeholder="e.g. 1.0" step="0.01" />
+          </div>
+          <div class="field-group">
+            <label for="tg" class="field-label">Triglycerides <span class="unit">(mg/dL)</span></label>
+            <input type="number" id="tg" name="TG" class="field-input" placeholder="e.g. 150" step="0.1" />
+          </div>
+          <div class="field-group">
+            <label for="ldl" class="field-label">LDL Cholesterol <span class="unit">(mg/dL)</span></label>
+            <input type="number" id="ldl" name="LDL" class="field-input" placeholder="e.g. 100" step="0.1" />
+          </div>
+          <div class="field-group">
+            <label for="hdl" class="field-label">HDL Cholesterol <span class="unit">(mg/dL)</span></label>
+            <input type="number" id="hdl" name="HDL" class="field-input" placeholder="e.g. 45" step="0.1" />
+          </div>
+          <div class="field-group">
+            <label for="bun" class="field-label">BUN <span class="unit">(mg/dL)</span></label>
+            <input type="number" id="bun" name="BUN" class="field-input" placeholder="e.g. 15" step="0.1" />
+          </div>
+          <div class="field-group">
+            <label for="esr" class="field-label">ESR <span class="unit">(mm/hr)</span></label>
+            <input type="number" id="esr" name="ESR" class="field-input" placeholder="e.g. 20" step="0.1" />
+          </div>
+          <div class="field-group">
+            <label for="hb" class="field-label">Hemoglobin <span class="unit">(g/dL)</span></label>
+            <input type="number" id="hb" name="HB" class="field-input" placeholder="e.g. 13.5" step="0.1" />
+          </div>
+          <div class="field-group">
+            <label for="k" class="field-label">Potassium <span class="unit">(mmol/L)</span></label>
+            <input type="number" id="k" name="K" class="field-input" placeholder="e.g. 4.2" step="0.01" />
+          </div>
+          <div class="field-group">
+            <label for="na" class="field-label">Sodium <span class="unit">(mmol/L)</span></label>
+            <input type="number" id="na" name="Na" class="field-input" placeholder="e.g. 138" step="0.1" />
+          </div>
+          <div class="field-group">
+            <label for="wbc" class="field-label">WBC Count <span class="unit">(/dL)</span></label>
+            <input type="number" id="wbc" name="WBC" class="field-input" placeholder="e.g. 7500" step="1" />
+          </div>
+          <div class="field-group">
+            <label for="lymph" class="field-label">Lymphocyte <span class="unit">(%)</span></label>
+            <input type="number" id="lymph" name="Lymph" class="field-input" placeholder="e.g. 30" step="0.1" max="100" />
+          </div>
+          <div class="field-group">
+            <label for="neut" class="field-label">Neutrophil <span class="unit">(%)</span></label>
+            <input type="number" id="neut" name="Neut" class="field-input" placeholder="e.g. 60" step="0.1" max="100" />
+          </div>
+          <div class="field-group">
+            <label for="plt" class="field-label">Platelet Count <span class="unit">(/dL)</span></label>
+            <input type="number" id="plt" name="PLT" class="field-input" placeholder="e.g. 250000" step="1" />
+          </div>
+        </div>
+      </section>
+
+      <!-- HEART TESTS -->
+      <section class="card">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+              <path d="M12 3a5 5 0 100 10A5 5 0 0012 3z"/>
+              <path d="M10 9l2-2 2 2"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Heart Tests</h2>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field-group">
+            <label for="ef-tte" class="field-label">Ejection Fraction EF-TTE <span class="unit">(%)</span></label>
+            <input type="number" id="ef-tte" name="EF-TTE" class="field-input" placeholder="e.g. 55" min="0" max="100" step="0.1" />
+          </div>
+          <div class="field-group">
+            <label for="region-rwma" class="field-label">Region RWMA <span class="unit">(0–4)</span></label>
+            <select id="region-rwma" name="Region RWMA" class="field-input">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="vhd" class="field-label">Valvular Heart Disease</label>
+            <select id="vhd" name="VHD" class="field-input">
+              <option value="N">None</option>
+              <option value="mild">Mild</option>
+              <option value="Moderate">Moderate</option>
+              <option value="Severe">Severe</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUBMIT -->
+      <div class="submit-area">
+        <button type="submit" id="submitBtn" class="btn-submit">
+          <span class="btn-icon">🫀</span>
+          <span class="btn-text">Run CAD Risk Prediction</span>
+          <span class="btn-spinner" id="btnSpinner" style="display:none;">
+            <svg class="spinner-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+          </span>
+        </button>
+        <p class="submit-disclaimer">⚠️ This tool is for demonstration purposes only and should not replace professional medical advice.</p>
+      </div>
+
+    </form>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="result-panel" style="display:none;" aria-live="polite">
+      <div class="result-header">
+        <div class="result-brand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          Cardionyx Prediction Result
+        </div>
+        <button class="result-close" id="closeResult" title="Close result">✕</button>
+      </div>
+
+      <div class="result-main">
+        <div class="risk-gauge" id="riskGauge">
+          <div class="gauge-circle" id="gaugeCircle">
+            <span class="gauge-pct" id="gaugePct">—%</span>
+            <span class="gauge-label">CAD Probability</span>
+          </div>
+        </div>
+        <div class="result-summary">
+          <div class="result-risk-badge" id="riskBadge">—</div>
+          <div class="result-verdict" id="resultVerdict">—</div>
+        </div>
+      </div>
+
+      <div class="ecg-findings" id="ecgFindings">
+        <h3 class="findings-title">ECG Findings</h3>
+        <div class="findings-grid" id="findingsGrid"></div>
+      </div>
+
+      <div class="result-disclaimer">
+        ⚠️ This prediction is AI-generated for demonstration only. Always consult a qualified medical professional for clinical decisions.
+      </div>
+    </div>
+
+    <div id="errorBanner" class="error-banner" style="display:none;">
+      <span class="error-icon">⚠️</span>
+      <span id="errorMsg"></span>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>Cardionyx · AI-Powered CAD Risk Assessment · Demo</p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
